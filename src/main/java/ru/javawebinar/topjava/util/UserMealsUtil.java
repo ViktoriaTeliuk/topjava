@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.function.Consumer;
+
+import static java.util.Collections.*;
 
 
 public class UserMealsUtil {
@@ -24,43 +27,21 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 29, 19, 0), "Ужин", 1600)
         );
         List<UserMealWithExceed> list = getFilteredWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i));
-        }
+
+        list.forEach(System.out::println);
 //        .toLocalDate();
 //        .toLocalTime();
     }
 
     public static List<UserMealWithExceed> getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 
+        Map<LocalDate, Integer> mapForCaloriesSum = new HashMap<>();
+        mealList.forEach(userMeal -> mapForCaloriesSum.merge(userMeal.getDateTime().toLocalDate(), userMeal.getCalories(), (prevVal, newVal) -> prevVal + newVal));
         List<UserMealWithExceed> result = new ArrayList<>();
-        Collections.sort(mealList, new Comparator<UserMeal>() {
-            @Override
-            public int compare(UserMeal o1, UserMeal o2) {
-                return o1.getDateTime().compareTo(o2.getDateTime());
-            }
+        mealList.forEach(userMeal -> {
+            if (TimeUtil.isBetween(userMeal.getDateTime().toLocalTime(), startTime, endTime))
+                result.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), mapForCaloriesSum.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay));
         });
-
-        List<UserMeal> userMealListForOneDay = new ArrayList<>();
-        int calories = 0;
-
-        for (int i = 0; i < mealList.size(); i++) {
-            UserMeal um = mealList.get(i);
-
-            if (TimeUtil.isBetween(um.getDateTime().toLocalTime(), startTime, endTime)) //to add only needed records
-                userMealListForOneDay.add(um);
-            calories += um.getCalories();
-
-            // now we have all data to add info about one day to result list
-            if ((i == mealList.size() - 1) || (!mealList.get(i + 1).getDateTime().toLocalDate().equals(um.getDateTime().toLocalDate()))) {
-                for (UserMeal userMeal : userMealListForOneDay
-                ) {
-                    result.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), calories > caloriesPerDay));
-                }
-                calories = 0;
-                userMealListForOneDay.clear();
-            }
-        }
 
         return result;
     }
