@@ -8,13 +8,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static java.util.Collections.*;
 
 
 public class UserMealsUtil {
@@ -53,9 +48,10 @@ public class UserMealsUtil {
     public static List<UserMealWithExceed> getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 
         Map<LocalDate, Integer> mapForCaloriesSum = mealList.stream().collect(Collectors.toMap(userMeal -> userMeal.getDateTime().toLocalDate(),
-                UserMeal::getCalories, (v1, v2) -> v1 + v2));
+                UserMeal::getCalories, Integer::sum));
 
-        return mealList.stream().filter(userMeal -> TimeUtil.isBetween(userMeal.getDateTime().toLocalTime(), startTime, endTime))
+        return mealList.stream()
+                .filter(userMeal -> TimeUtil.isBetween(userMeal.getDateTime().toLocalTime(), startTime, endTime))
                 .map(userMeal -> new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(),
                         mapForCaloriesSum.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
