@@ -16,12 +16,16 @@
     <tr><th>Date/Time</th><th>Description</th><th>Calories</th></tr>
     <c:forEach items="${mealsTo}" var="meal" >
     <tr style="color: ${meal.excess? 'red' : 'green'}">
-        <td><fmt:formatDate type = "both" value = "${localDateTimeFormat.parse(meal.dateTime)}"/> </td>
+        <td><fmt:parseDate value="${meal.dateTime}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both" />
+            <fmt:formatDate pattern="dd.MM.yyyy HH:mm" value="${parsedDateTime}" /></td>
         <td>${meal.description}</td>
         <td>${meal.calories}</td>
+        <td><a href="editMeal?action=edit&id=<c:out value="${meal.id}"/>">Update</a></td>
+        <td><a href="editMeal?action=delete&id=<c:out value="${meal.id}"/>">Delete</a></td>
     </tr>
     </c:forEach>
     </tbody>
 </table>
+<p><a href="editMeal?action=insert">Add Meal</a></p>
 </body>
 </html>
