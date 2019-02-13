@@ -9,7 +9,7 @@
 </head>
 <body>
 <form method="POST" action='editMeal' name="frmAddUser">
-    ID : <input type="text" readonly="readonly" name="id"
+    <input type="text" readonly="readonly" hidden="hidden" name="id"
                      value="${meal.id}" /> <br />
     Calories : <input type="number" name="calories"
         value="${meal.calories}" /> <br />

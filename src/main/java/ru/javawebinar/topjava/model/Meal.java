@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class Meal implements IMeal {
+public class Meal {
     private final int id;
 
     private final LocalDateTime dateTime;
@@ -19,15 +19,15 @@ public class Meal implements IMeal {
         this.description = description;
         this.calories = calories;
     }
-    @Override
+
     public LocalDateTime getDateTime() {
         return dateTime;
     }
-    @Override
+
     public String getDescription() {
         return description;
     }
-    @Override
+
     public int getCalories() {
         return calories;
     }
@@ -39,9 +39,10 @@ public class Meal implements IMeal {
     public LocalTime getTime() {
         return dateTime.toLocalTime();
     }
-    @Override
+
     public int getId() {
         return id;
     }
+
 
 }

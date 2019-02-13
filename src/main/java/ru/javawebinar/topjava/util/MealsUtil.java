@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class MealsUtil {
 
-    public static List<Meal> fillMealToListWithDataHrdc() {
+    public static List<Meal> getMealsList() {
         return Arrays.asList(
                 new Meal(1, LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак 1", 500),
                 new Meal(2, LocalDateTime.of(2015, Month.MAY, 30, 13, 30), "Обед 1", 1000),
@@ -23,7 +23,7 @@ public class MealsUtil {
         );
     }
     public static void main(String[] args) {
-        List<Meal> meals = fillMealToListWithDataHrdc();
+        List<Meal> meals = getMealsList();
         List<MealTo> mealsWithExcess = getFilteredWithExcess(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         mealsWithExcess.forEach(System.out::println);
  }
