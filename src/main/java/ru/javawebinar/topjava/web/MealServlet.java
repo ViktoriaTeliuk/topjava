@@ -24,21 +24,26 @@ public class MealServlet extends HttpServlet {
         if (action == null)
             req.setAttribute("mealsTo", MealsUtil.getFilteredWithExcess(mealsCrud.getAll(),
                     LocalTime.MIN, LocalTime.MAX, 2000));
-        else if (action.equalsIgnoreCase("edit")) {
-            forward = "/editMeal.jsp";
-            int mealId = Integer.parseInt(req.getParameter("id"));
-            Meal meal = mealsCrud.getById(mealId);
-            req.setAttribute("meal", meal);
-        } else if (action.equalsIgnoreCase("insert"))
-            forward = "/editMeal.jsp";
-        else if (action.equalsIgnoreCase("delete")) {
-            int mealId = Integer.parseInt(req.getParameter("id"));
-            mealsCrud.delete(mealId);
-            req.setAttribute("mealsTo", MealsUtil.getFilteredWithExcess(mealsCrud.getAll(),
-                    LocalTime.MIN, LocalTime.MAX, 2000));
-            resp.sendRedirect("meals");
-            return;
+        else switch (action.toLowerCase()) {
+            case "edit": {
+                forward = "/editMeal.jsp";
+                int mealId = Integer.parseInt(req.getParameter("id"));
+                Meal meal = mealsCrud.getById(mealId);
+                req.setAttribute("meal", meal);
+                break;
+            }
+            case "insert": {
+                forward = "/editMeal.jsp";
+                break;
+            }
+            case "delete": {
+                int mealId = Integer.parseInt(req.getParameter("id"));
+                mealsCrud.delete(mealId);
+                resp.sendRedirect("meals");
+                return;
+            }
         }
+
         req.getRequestDispatcher(forward).forward(req, resp);
     }
 
@@ -57,9 +62,6 @@ public class MealServlet extends HttpServlet {
             mealsCrud.add(new Meal(0, dt, descr, calories));
         else
             mealsCrud.edit(new Meal(Integer.parseInt(mealID), dt, descr, calories));
-
-        req.setAttribute("mealsTo", MealsUtil.getFilteredWithExcess(mealsCrud.getAll(),
-                LocalTime.MIN, LocalTime.MAX, 2000));
 
         resp.sendRedirect("meals");
     }

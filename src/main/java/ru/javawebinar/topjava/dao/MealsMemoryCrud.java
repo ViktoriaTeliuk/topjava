@@ -24,16 +24,14 @@ public class MealsMemoryCrud implements IMealsCrud {
         return new ArrayList<>(mealsMap.values());}
 
 
-    public static class Counter {
-        private static AtomicInteger count = new AtomicInteger(0);
-        static int incrementAndGetID() {
-            return count.incrementAndGet();
+    private static AtomicInteger nextID = new AtomicInteger(mealsMap.size());
+    static int incrementAndGetID() {
+            return nextID.incrementAndGet();
         }
-    }
 
     @Override
     public Meal add(Meal meal) {
-        int id = Counter.incrementAndGetID();
+        int id = incrementAndGetID();
         return mealsMap.put(id, new Meal(id, meal.getDateTime(), meal.getDescription(), meal.getCalories())); // create new Meal to fill id
     }
 

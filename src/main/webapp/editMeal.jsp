@@ -8,12 +8,13 @@
     <title>Add/Edit new user</title>
 </head>
 <body>
-<form method="POST" action='editMeal' name="frmAddUser">
-    <input type="text" readonly="readonly" hidden="hidden" name="id"
+<!-- jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>!-->
+<form method="POST" action='meals' name="frmAddUser">
+    <input type="hidden" readonly="readonly" name="id"
                      value="${meal.id}" /> <br />
-    Calories : <input type="number" name="calories"
+    Calories : <input type="number" name="calories" required
         value="${meal.calories}" /> <br />
-    Description : <input type="text" name="description"
+    Description : <input type="text" name="description" required
         value="${meal.description}" /> <br />
     Date & Time : <input type="datetime-local" name="dateTime"
         value="${meal.dateTime}" /> <br/>

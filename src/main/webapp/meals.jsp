@@ -15,17 +15,18 @@
     <tbody>
     <tr><th>Date/Time</th><th>Description</th><th>Calories</th></tr>
     <c:forEach items="${mealsTo}" var="meal" >
+        <jsp:useBean id = "meal" scope="page" type="ru.javawebinar.topjava.model.MealTo"/>
     <tr style="color: ${meal.excess? 'red' : 'green'}">
         <td><fmt:parseDate value="${meal.dateTime}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both" />
             <fmt:formatDate pattern="dd.MM.yyyy HH:mm" value="${parsedDateTime}" /></td>
         <td>${meal.description}</td>
         <td>${meal.calories}</td>
-        <td><a href="editMeal?action=edit&id=<c:out value="${meal.id}"/>">Update</a></td>
-        <td><a href="editMeal?action=delete&id=<c:out value="${meal.id}"/>">Delete</a></td>
+        <td><a href="meals?action=edit&id=<c:out value="${meal.id}"/>">Update</a></td>
+        <td><a href="meals?action=delete&id=<c:out value="${meal.id}"/>">Delete</a></td>
     </tr>
     </c:forEach>
     </tbody>
 </table>
-<p><a href="editMeal?action=insert">Add Meal</a></p>
+<p><a href="meals?action=insert">Add Meal</a></p>
 </body>
 </html>
