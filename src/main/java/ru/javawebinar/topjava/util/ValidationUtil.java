@@ -39,4 +39,9 @@ public class ValidationUtil {
             throw new IllegalArgumentException(entity + " must be with id=" + id);
         }
     }
+
+    public static void checkUsrIDAreEqual(int mealsUserID, int authorisedUserID) {
+        if (mealsUserID != authorisedUserID)
+            throw new NotFoundException(String.format("User can work only with his meal. Authorised UserID = %d, Meal's UserID = %d ", authorisedUserID, mealsUserID));
+    }
 }
