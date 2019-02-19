@@ -21,15 +21,20 @@
     <h3><a href="index.html">Home</a></h3>
     <h2>Meals</h2>
     <form method="get" action="meals">
-        <label>Date from:</label>
-       <input type="date" name="dateFrom" value="${dateFrom}">
-        <label>Date to:</label>
-        <input type="date" name="dateTo" value = "${dateTo}">
-        <label>Time from:</label>
-        <input type="time" name = "timeFrom" value = "${timeFrom}">
-        <label>Time to:</label>
-        <input type="time" name = "timeTo" value="${timeTo}">
+        <label>Date from:
+        <input type="date" name="dateFrom" value="${param.get("dateFrom")}" >
+        </label>
+        <label>Date to:
+        <input type="date" name="dateTo" value = "${param.get("dateTo")}">
+        </label>
+        <label>Time from:
+        <input type="time" name = "timeFrom" value = "${param.get("timeFrom")}">
+        </label>
+        <label>Time to:
+        <input type="time" name = "timeTo" value="${param.get("timeTo")}">
+        </label>
         <button type="submit">Filter</button>
+        <button onclick="window.history.back()" type="button">Cancel</button>
         <!--button type="reset"-->
     </form>
     <a href="meals?action=create">Add Meal</a>

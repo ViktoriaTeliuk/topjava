@@ -42,6 +42,6 @@ public class ValidationUtil {
 
     public static void checkUsrIDAreEqual(int mealsUserID, int authorisedUserID) {
         if (mealsUserID != authorisedUserID)
-            throw new NotFoundException(String.format("User can work only with his meal. Authorised UserID = %d, Meal's UserID = %d ", authorisedUserID, mealsUserID));
+            throw new NotFoundException("Wrong userId");
     }
 }

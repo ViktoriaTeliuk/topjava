@@ -24,9 +24,9 @@ public class MealRestController {
     @Autowired
     private MealService service;
 
-    public List<Meal> getAll(int userID) {
+    public List<Meal> getAll() {
         log.info("getAll");
-        return service.getAll(userID);
+        return service.getAll(SecurityUtil.authUserId());
     }
 
     public Meal get(int id) {
@@ -37,6 +37,7 @@ public class MealRestController {
     public Meal create(Meal meal) {
         log.info("create {}", meal);
         checkNew(meal);
+        meal.setUserId(SecurityUtil.authUserId());
         return service.create(meal, SecurityUtil.authUserId());
     }
 
@@ -48,15 +49,23 @@ public class MealRestController {
     public void update(Meal meal, int id) {
         log.info("update {}", id);
         assureIdConsistent(meal, id);
+        meal.setUserId(SecurityUtil.authUserId());
         service.update(meal, SecurityUtil.authUserId());
     }
 
-    public List<Meal> getFilteredList(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, String namePart) {
+    public List<MealTo> getFilteredList(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, int calories) {
         log.info("getFilteredList {} {} {} {} {}", startDate, endDate, startTime, endTime);
-        return service.getFilteredList(SecurityUtil.authUserId(), startDate, endDate, startTime, endTime);
+        startDate = startDate == null?LocalDate.MIN:startDate;
+        endDate = endDate==null?LocalDate.MAX:endDate;
+        startTime = startTime==null?LocalTime.MIN:startTime;
+        endTime = endTime==null?LocalTime.MAX:endTime;
+
+        return MealsUtil.getFilteredWithExcess(service.getFilteredList(SecurityUtil.authUserId(), startDate, endDate, LocalTime.MIN, LocalTime.MAX),
+                calories, startTime, endTime);
     }
 
-    public List<MealTo> getMealToList(Collection<Meal> meals, int caloriesPerDay) {
+    public List<MealTo> convertToListWithExcess(Collection<Meal> meals, int caloriesPerDay) {
        return MealsUtil.getFilteredWithExcess(meals, caloriesPerDay, LocalTime.MIN, LocalTime.MAX);
     }
+
 }

@@ -46,8 +46,8 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
 
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                SecurityUtil.authUserId(),
+        Meal meal = new Meal( id.isEmpty() ? null : Integer.valueOf(id),
+                0,
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
@@ -63,10 +63,7 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        String userID = request.getParameter("selectUser");
-        if (userID != null)
-          SecurityUtil.setAuthUserId(Integer.parseInt(userID));
-
+        request.setCharacterEncoding("UTF-8");
         switch (action == null ? "all" : action) {
             case "delete":
                 int id = getId(request);
@@ -77,7 +74,7 @@ public class MealServlet extends HttpServlet {
             case "create":
             case "update":
                 final Meal meal = "create".equals(action) ?
-                        new Meal(SecurityUtil.authUserId(), LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
+                        new Meal(0, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
                         mealRestController.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
@@ -90,17 +87,11 @@ public class MealServlet extends HttpServlet {
                     LocalTime timeFrom = request.getParameter("timeFrom").isEmpty() ? null : LocalTime.parse(request.getParameter("timeFrom"));
                     LocalTime timeTo = request.getParameter("timeTo").isEmpty() ? null : LocalTime.parse(request.getParameter("timeTo"));
                     log.info("filter");
-                    request.setAttribute("meals", mealRestController.getMealToList(
-                            mealRestController.getFilteredList(dateFrom, dateTo, timeFrom, timeTo, null), MealsUtil.DEFAULT_CALORIES_PER_DAY));
-                    //to save filter params on form
-                    request.setAttribute("dateFrom", dateFrom);
-                    request.setAttribute("dateTo", dateTo);
-                    request.setAttribute("timeFrom", timeFrom);
-                    request.setAttribute("timeTo", timeTo);
-                } else {
+                    request.setAttribute("meals", mealRestController.getFilteredList(dateFrom, dateTo, timeFrom, timeTo, MealsUtil.DEFAULT_CALORIES_PER_DAY));
+               } else {
                     log.info("getAll");
                     request.setAttribute("meals",
-                            mealRestController.getMealToList(mealRestController.getAll(SecurityUtil.authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                            mealRestController.convertToListWithExcess(mealRestController.getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY));
                 }
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;

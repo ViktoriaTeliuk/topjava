@@ -9,7 +9,6 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
@@ -25,39 +24,33 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public Meal create(Meal meal, int userID) {
+    public Meal create(Meal meal, int userId) {
         checkNew(meal);
-        checkUsrIDAreEqual(meal.getUserID(), userID);
-        return repository.save(meal);
+        return repository.save(meal, userId);
     }
 
     @Override
-    public void delete(int id, int userID) throws NotFoundException {
-        checkUsrIDAreEqual(get(id, userID).getUserID(), userID);
-        repository.delete(id);
+    public void delete(int id, int userId) throws NotFoundException {
+        repository.delete(id, userId);
     }
 
     @Override
-    public Meal get(int id, int userID) throws NotFoundException {
-        Meal meal = repository.get(id);
-        checkNotFoundWithId(meal, id);
-        checkUsrIDAreEqual(meal.getUserID(), userID);
-        return ValidationUtil.checkNotFoundWithId(meal, id);
+    public Meal get(int id, int userId) throws NotFoundException {
+       return ValidationUtil.checkNotFoundWithId(repository.get(id, userId), id);
     }
 
     @Override
-    public void update(Meal meal, int userID) {
-        checkUsrIDAreEqual(meal.getUserID(), userID);
-        repository.save(meal);
+    public void update(Meal meal, int userId) {
+        repository.save(meal, userId);
     }
 
     @Override
-    public List<Meal> getAll(int userID) {
-        return new ArrayList<>(repository.getAll(userID));
+    public List<Meal> getAll(int userId) {
+        return repository.getAll(userId);
     }
 
     @Override
-    public List<Meal> getFilteredList(int userID, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        return  new ArrayList<>(repository.getFilteredList(userID, startDate, endDate, startTime, endTime));
+    public List<Meal> getFilteredList(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+        return repository.getFilteredList(userId, startDate, endDate, startTime, endTime);
     }
 }

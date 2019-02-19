@@ -4,16 +4,16 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collection;
+import java.util.List;
 
 public interface MealRepository {
-    Meal save(Meal meal);
+    Meal save(Meal meal, int userId);
 
-    void delete(int id);
+    void delete(int id, int userId);
 
-    Meal get(int id);
+    Meal get(int id, int userId);
 
-    Collection<Meal> getAll(int userID);
+    List<Meal> getAll(int userId);
 
-    Collection<Meal> getFilteredList(int userID, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
+    List<Meal> getFilteredList(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
 }

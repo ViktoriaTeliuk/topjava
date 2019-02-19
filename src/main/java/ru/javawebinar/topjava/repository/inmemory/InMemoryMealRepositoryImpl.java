@@ -8,57 +8,71 @@ import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkUsrIDAreEqual;
 
 @Repository
 public class InMemoryMealRepositoryImpl implements MealRepository {
-    private Map<Integer, Meal> repository = new HashMap<>();
+    private Map<Integer, Map<Integer, Meal>> repository = new HashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.MEALS.forEach(this::save);
+        MealsUtil.MEALS.forEach( meal -> save(meal, meal.getUserId()));
     }
 
     @Override
-    public Meal save(Meal meal) {
+    public Meal save(Meal meal, int userId) {
+
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            repository.put(meal.getId(), meal);
+            repository.putIfAbsent(userId, new HashMap<>());
+            repository.get(userId).put(meal.getId(), meal);
             return meal;
         }
-        // treat case: update, but absent in storage
-        return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        checkUsrIDAreEqual(get(meal.getId(), userId).getUserId(), userId);
+        return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
-    public void delete(int id) {
-        repository.remove(id);
+    public void delete(int id, int userId) {
+        checkUsrIDAreEqual(get(id, userId).getUserId(), userId);
+        repository.get(userId).remove(id);
     }
 
     @Override
-    public Meal get(int id) {
-        return repository.get(id);
+    public Meal get(int id, int userId) {
+        Map<Integer, Meal> mapMeals = repository.get(userId);
+        checkNotFoundWithId(mapMeals, userId);
+        Meal meal = mapMeals.get(id);
+        checkNotFoundWithId(meal, id);
+        checkUsrIDAreEqual(meal.getUserId(), userId);
+        return  meal;
+    }
+
+    private Comparator<Meal> comparatorDateReverse = Comparator.comparing(Meal::getDateTime).reversed();
+
+    private Stream<Meal> getListForUser(int userId) {
+        return repository.get(userId).values().stream();
     }
 
     @Override
-    public Collection<Meal> getAll(int userID) {
-        return repository.values().stream()
-                .filter(meal -> meal.getUserID() == userID)
-                .sorted((o1, o2) -> o2.getDateTime().compareTo(o1.getDateTime()))
-                .collect(Collectors.toList());
+    public List<Meal> getAll(int userId) {
+        return getListForUser(userId).sorted(comparatorDateReverse).collect(Collectors.toList());
     }
 
     @Override
-    public Collection<Meal> getFilteredList(int userID, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        return getAll(userID).stream()
-                .filter(meal -> (startDate == null || DateTimeUtil.isBetween(meal.getDate(), startDate, LocalDate.MAX)) &&
-                        (endDate == null || DateTimeUtil.isBetween(meal.getDate(), LocalDate.MIN, endDate)) &&
-                        (startTime == null || DateTimeUtil.isBetween(meal.getTime(), startTime, LocalTime.MAX)) &&
-                        (endTime == null || DateTimeUtil.isBetween(meal.getTime(), LocalTime.MIN, endTime)))
+    public List<Meal> getFilteredList(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+        return getListForUser(userId)
+                .filter(meal -> (DateTimeUtil.isBetween(meal.getDate(), startDate, LocalDate.MAX)) &&
+                        (DateTimeUtil.isBetween(meal.getDate(), LocalDate.MIN, endDate)) &&
+                        (DateTimeUtil.isBetween(meal.getTime(), startTime, LocalTime.MAX)) &&
+                        (DateTimeUtil.isBetween(meal.getTime(), LocalTime.MIN, endTime)))
+                .sorted(comparatorDateReverse)
                 .collect(Collectors.toList());
     }
 
