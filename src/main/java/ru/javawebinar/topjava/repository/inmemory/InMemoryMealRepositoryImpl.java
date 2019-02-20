@@ -52,8 +52,6 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         if (mapMeals == null) return null;
         Meal meal = mapMeals.get(id);
         if (meal == null) return null;
-        if (meal.getUserId() != userId)
-            throw new NotFoundException("Wrong userId");
         return meal;
     }
 
