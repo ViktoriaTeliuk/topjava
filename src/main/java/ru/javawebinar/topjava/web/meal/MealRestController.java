@@ -12,7 +12,6 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collection;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
@@ -24,9 +23,9 @@ public class MealRestController {
     @Autowired
     private MealService service;
 
-    public List<Meal> getAll() {
+    public List<MealTo> getAll() {
         log.info("getAll");
-        return service.getAll(SecurityUtil.authUserId());
+        return MealsUtil.getFilteredWithExcess(service.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay(), LocalTime.MIN, LocalTime.MAX);
     }
 
     public Meal get(int id) {
@@ -55,17 +54,9 @@ public class MealRestController {
 
     public List<MealTo> getFilteredList(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, int calories) {
         log.info("getFilteredList {} {} {} {} {}", startDate, endDate, startTime, endTime);
-        startDate = startDate == null?LocalDate.MIN:startDate;
-        endDate = endDate==null?LocalDate.MAX:endDate;
-        startTime = startTime==null?LocalTime.MIN:startTime;
-        endTime = endTime==null?LocalTime.MAX:endTime;
-
-        return MealsUtil.getFilteredWithExcess(service.getFilteredList(SecurityUtil.authUserId(), startDate, endDate, LocalTime.MIN, LocalTime.MAX),
-                calories, startTime, endTime);
-    }
-
-    public List<MealTo> convertToListWithExcess(Collection<Meal> meals, int caloriesPerDay) {
-       return MealsUtil.getFilteredWithExcess(meals, caloriesPerDay, LocalTime.MIN, LocalTime.MAX);
+        return MealsUtil.getFilteredWithExcess(service.getFilteredList(SecurityUtil.authUserId(),
+                startDate == null ? LocalDate.MIN : startDate, endDate == null ? LocalDate.MAX : endDate),
+                calories, startTime == null ? LocalTime.MIN : startTime, endTime == null ? LocalTime.MAX : endTime);
     }
 
 }

@@ -5,16 +5,14 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
-import static ru.javawebinar.topjava.util.ValidationUtil.checkUsrIDAreEqual;
 
 @Repository
 public class InMemoryMealRepositoryImpl implements MealRepository {
@@ -22,7 +20,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.MEALS.forEach( meal -> save(meal, meal.getUserId()));
+        MealsUtil.MEALS.forEach(meal -> save(meal, meal.getUserId()));
     }
 
     @Override
@@ -34,47 +32,46 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             repository.get(userId).put(meal.getId(), meal);
             return meal;
         }
-        checkUsrIDAreEqual(get(meal.getId(), userId).getUserId(), userId);
-        return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        Map<Integer, Meal> mapMeals = repository.get(userId);
+        if (mapMeals == null)
+            throw new NotFoundException("Meal not found for userId = " + userId);
+
+        return mapMeals.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
-    public void delete(int id, int userId) {
-        checkUsrIDAreEqual(get(id, userId).getUserId(), userId);
-        repository.get(userId).remove(id);
+    public boolean delete(int id, int userId) {
+        Map<Integer, Meal> mapMeals = repository.get(userId);
+        if (mapMeals == null) return false;
+        return (mapMeals.remove(id) != null);
     }
 
     @Override
     public Meal get(int id, int userId) {
         Map<Integer, Meal> mapMeals = repository.get(userId);
-        checkNotFoundWithId(mapMeals, userId);
+        if (mapMeals == null) return null;
         Meal meal = mapMeals.get(id);
-        checkNotFoundWithId(meal, id);
-        checkUsrIDAreEqual(meal.getUserId(), userId);
-        return  meal;
-    }
-
-    private Comparator<Meal> comparatorDateReverse = Comparator.comparing(Meal::getDateTime).reversed();
-
-    private Stream<Meal> getListForUser(int userId) {
-        return repository.get(userId).values().stream();
+        if (meal == null) return null;
+        if (meal.getUserId() != userId)
+            throw new NotFoundException("Wrong userId");
+        return meal;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return getListForUser(userId).sorted(comparatorDateReverse).collect(Collectors.toList());
+        return getListForUser(userId, meal -> true);
     }
 
     @Override
-    public List<Meal> getFilteredList(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        return getListForUser(userId)
-                .filter(meal -> (DateTimeUtil.isBetween(meal.getDate(), startDate, LocalDate.MAX)) &&
-                        (DateTimeUtil.isBetween(meal.getDate(), LocalDate.MIN, endDate)) &&
-                        (DateTimeUtil.isBetween(meal.getTime(), startTime, LocalTime.MAX)) &&
-                        (DateTimeUtil.isBetween(meal.getTime(), LocalTime.MIN, endTime)))
-                .sorted(comparatorDateReverse)
-                .collect(Collectors.toList());
+    public List<Meal> getFilteredList(int userId, LocalDate startDate, LocalDate endDate) {
+        return getListForUser(userId, meal -> (DateTimeUtil.isBetween(meal.getDate(), startDate, endDate)));
     }
 
+    private List<Meal> getListForUser(int userId, Predicate<Meal> filter) {
+        return repository.get(userId).values().stream()
+                .filter(filter)
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                .collect(Collectors.toList());
+    }
 }
 

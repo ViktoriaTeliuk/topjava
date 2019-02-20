@@ -9,11 +9,11 @@ import java.util.List;
 public interface MealRepository {
     Meal save(Meal meal, int userId);
 
-    void delete(int id, int userId);
+    boolean delete(int id, int userId);
 
     Meal get(int id, int userId);
 
     List<Meal> getAll(int userId);
 
-    List<Meal> getFilteredList(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
+    List<Meal> getFilteredList(int userId, LocalDate startDate, LocalDate endDate);
 }

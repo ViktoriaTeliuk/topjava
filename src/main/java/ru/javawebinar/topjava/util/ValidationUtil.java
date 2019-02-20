@@ -40,8 +40,4 @@ public class ValidationUtil {
         }
     }
 
-    public static void checkUsrIDAreEqual(int mealsUserID, int authorisedUserID) {
-        if (mealsUserID != authorisedUserID)
-            throw new NotFoundException("Wrong userId");
-    }
 }

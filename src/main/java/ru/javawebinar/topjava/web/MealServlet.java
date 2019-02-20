@@ -46,7 +46,7 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
 
-        Meal meal = new Meal( id.isEmpty() ? null : Integer.valueOf(id),
+        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
                 0,
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
@@ -88,10 +88,9 @@ public class MealServlet extends HttpServlet {
                     LocalTime timeTo = request.getParameter("timeTo").isEmpty() ? null : LocalTime.parse(request.getParameter("timeTo"));
                     log.info("filter");
                     request.setAttribute("meals", mealRestController.getFilteredList(dateFrom, dateTo, timeFrom, timeTo, MealsUtil.DEFAULT_CALORIES_PER_DAY));
-               } else {
+                } else {
                     log.info("getAll");
-                    request.setAttribute("meals",
-                            mealRestController.convertToListWithExcess(mealRestController.getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                    request.setAttribute("meals", mealRestController.getAll());
                 }
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
