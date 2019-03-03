@@ -37,10 +37,11 @@ public class Meal extends AbstractBaseEntity {
 
     @Column(name = "calories", columnDefinition = "int default 1000")
     @Range(min = 1, max = 10000)
+    @NotNull
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="user_id", nullable = false)
     private User user;
 
     public Meal() {
