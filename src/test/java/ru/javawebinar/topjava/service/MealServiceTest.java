@@ -7,6 +7,8 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -55,9 +57,11 @@ public class MealServiceTest {
         }
     };
 
+    private static Logger logger = LoggerFactory.getLogger(MealServiceTest.class.getName());
+
     @AfterClass
     public static void after() {
-        listInfo.forEach(System.out::println);
+        listInfo.forEach(logger::info);
     }
 
     @Test
