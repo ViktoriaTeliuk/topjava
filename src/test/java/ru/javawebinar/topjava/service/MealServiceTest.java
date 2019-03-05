@@ -45,15 +45,15 @@ public class MealServiceTest {
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
-    private static long commonTime = 0;
+    private static StringBuilder testTimes = new StringBuilder();
     @Rule
     public Stopwatch stopWatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            commonTime += nanos;
-            logger.info(String.format("Test %s spent %d ms",
-                    description.getMethodName(), TimeUnit.NANOSECONDS.toMicros(nanos)));
-
+            String s = String.format("Test %s spent %d ms; ",
+                    description.getMethodName(), TimeUnit.NANOSECONDS.toMicros(nanos));
+            logger.info(s);
+            testTimes.append(s);
         }
     };
 
@@ -61,8 +61,7 @@ public class MealServiceTest {
 
     @AfterClass
     public static void after() {
-        logger.info(String.format("All tests %s spent %d ms", MealServiceTest.class.getName(),
-                TimeUnit.NANOSECONDS.toMicros(commonTime)));
+        logger.info(testTimes.toString());
     }
 
     @Test
