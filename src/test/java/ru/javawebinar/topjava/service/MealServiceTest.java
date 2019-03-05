@@ -20,7 +20,6 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -46,14 +45,15 @@ public class MealServiceTest {
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
-    private static ArrayList<String> listInfo = new ArrayList<>();
-
+    private static long commonTime = 0;
     @Rule
     public Stopwatch stopWatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            listInfo.add(String.format("Test %s spent %d ms",
+            commonTime += nanos;
+            logger.info(String.format("Test %s spent %d ms",
                     description.getMethodName(), TimeUnit.NANOSECONDS.toMicros(nanos)));
+
         }
     };
 
@@ -61,7 +61,8 @@ public class MealServiceTest {
 
     @AfterClass
     public static void after() {
-        listInfo.forEach(logger::info);
+        logger.info(String.format("All tests %s spent %d ms", MealServiceTest.class.getName(),
+                TimeUnit.NANOSECONDS.toMicros(commonTime)));
     }
 
     @Test
