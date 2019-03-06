@@ -50,10 +50,10 @@ public class MealServiceTest {
     public Stopwatch stopWatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            String s = String.format("Test %s spent %d ms; ",
+            String s = String.format("Test %s spent %d ms",
                     description.getMethodName(), TimeUnit.NANOSECONDS.toMicros(nanos));
             logger.info(s);
-            testTimes.append(s);
+            testTimes.append(s + '\n');
         }
     };
 
