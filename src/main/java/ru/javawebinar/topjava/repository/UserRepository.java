@@ -17,4 +17,11 @@ public interface UserRepository {
     User getByEmail(String email);
 
     List<User> getAll();
+
+    User getWithMealGr(int id);
+
+    User getWithMealQwr(int id);
+
+    User getWithMealByReading(int id);
+
 }

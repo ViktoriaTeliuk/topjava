@@ -69,4 +69,19 @@ public class JpaUserRepositoryImpl implements UserRepository {
     public List<User> getAll() {
         return em.createNamedQuery(User.ALL_SORTED, User.class).getResultList();
     }
+
+    @Override
+    public User getWithMealGr(int id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public User getWithMealQwr(int id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public User getWithMealByReading(int id) {
+        throw new UnsupportedOperationException();
+    }
 }
