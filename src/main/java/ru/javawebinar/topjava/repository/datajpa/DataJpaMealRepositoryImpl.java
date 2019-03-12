@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,16 +23,11 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
     @Transactional
     public Meal save(Meal meal, int userId) {
         User user = crudUserRepository.getOne(userId);
-        if (user == null) return null;
         meal.setUser(user);
         if (meal.isNew())
             return crudRepository.save(meal);
-        else {
-            if (get(meal.getId(), userId) == null)
-                throw new NotFoundException("Not found entity with id=" + meal.getId());
-            else
-                return crudRepository.save(meal);
-        }
+        else
+            return (get(meal.getId(), userId) == null) ? null : crudRepository.save(meal);
     }
 
     @Override
@@ -59,13 +53,7 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal getWithUser(int id, int userId) {
-        Meal meal = crudRepository.getById(id);
-        return meal.getUser().getId() == userId ? meal : null;
+        return crudRepository.getMealWithUser(id, userId);
     }
 
-    @Override
-    public Meal getWithUserQwr(int id, int userId) {
-        Meal meal = crudRepository.getMealWithUserQwr(id);
-        return meal.getUser().getId() == userId ? meal : null;
-    }
 }

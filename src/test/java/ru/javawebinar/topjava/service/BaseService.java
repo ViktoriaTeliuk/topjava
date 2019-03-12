@@ -58,6 +58,6 @@ public abstract class BaseService {
                 "\n---------------------------------" +
                 results +
                 "\n---------------------------------");
-
+        results.setLength(0);
     }
 }

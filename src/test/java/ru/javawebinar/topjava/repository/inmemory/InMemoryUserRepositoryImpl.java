@@ -37,19 +37,4 @@ public class InMemoryUserRepositoryImpl extends InMemoryBaseRepositoryImpl<User>
                 .findFirst()
                 .orElse(null);
     }
-
-    @Override
-    public User getWithMealGr(int id) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public User getWithMealQwr(int id) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public User getWithMealByReading(int id) {
-        throw new UnsupportedOperationException();
-    }
 }

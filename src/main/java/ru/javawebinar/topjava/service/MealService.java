@@ -30,6 +30,4 @@ public interface MealService {
 
     Meal getWithUser(int id, int userId) throws NotFoundException;
 
-    Meal getWithUserQwr(int id, int userId) throws NotFoundException;
-
 }

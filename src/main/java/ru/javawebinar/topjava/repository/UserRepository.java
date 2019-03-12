@@ -18,10 +18,6 @@ public interface UserRepository {
 
     List<User> getAll();
 
-    User getWithMealGr(int id);
-
-    User getWithMealQwr(int id);
-
-    User getWithMealByReading(int id);
+    default User getWithMeals(int id) {throw new UnsupportedOperationException();}
 
 }

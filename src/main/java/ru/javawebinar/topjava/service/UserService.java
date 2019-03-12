@@ -20,10 +20,5 @@ public interface UserService {
 
     List<User> getAll();
 
-    User getWithMealGr(int id) throws NotFoundException;
-
-    User getWithMEalQwr(int id) throws NotFoundException;
-
-    User getWithMealByReading(int id) throws NotFoundException;
-
+    User getWithMeals(int id) throws NotFoundException;
 }

@@ -15,7 +15,7 @@ import java.util.List;
 
 import static ru.javawebinar.topjava.UserTestData.*;
 
-public abstract class UserServiceT extends BaseService {
+public abstract class UserServiceTest extends BaseService {
 
     @Autowired
     protected UserService service;
@@ -34,7 +34,7 @@ public abstract class UserServiceT extends BaseService {
         User created = service.create(newUser);
         newUser.setId(created.getId());
         assertMatch(newUser, created);
-        assertMatch(service.getAll(), ADMIN, newUser, USER);
+        assertMatch(service.getAll(), ADMIN, newUser, USER, USER2);
     }
 
     @Test(expected = DataAccessException.class)
@@ -45,7 +45,7 @@ public abstract class UserServiceT extends BaseService {
     @Test
     public void delete() throws Exception {
         service.delete(USER_ID);
-        assertMatch(service.getAll(), ADMIN);
+        assertMatch(service.getAll(), ADMIN, USER2);
     }
 
     @Test(expected = NotFoundException.class)
@@ -82,7 +82,7 @@ public abstract class UserServiceT extends BaseService {
     @Test
     public void getAll() throws Exception {
         List<User> all = service.getAll();
-        assertMatch(all, ADMIN, USER);
+        assertMatch(all, ADMIN, USER, USER2);
     }
 
 }

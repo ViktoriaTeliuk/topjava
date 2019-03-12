@@ -21,7 +21,7 @@ import java.time.LocalTime;
 })
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
-@NamedEntityGraph(name = "MealWithUser" , attributeNodes = @NamedAttributeNode("user"))
+//@NamedEntityGraph(name = "MealWithUser" , attributeNodes = @NamedAttributeNode("user"))
 public class Meal extends AbstractBaseEntity {
     public static final String ALL_SORTED = "Meal.getAll";
     public static final String DELETE = "Meal.delete";

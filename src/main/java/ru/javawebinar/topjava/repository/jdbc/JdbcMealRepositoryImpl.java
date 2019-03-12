@@ -34,24 +34,20 @@ public abstract class JdbcMealRepositoryImpl implements MealRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    protected MapSqlParameterSource getParamForSaving(Meal meal, int userId) {
-        return new MapSqlParameterSource()
+    @Override
+    public Meal save(Meal meal, int userId) {
+        MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
-                .addValue("date_time", meal.getDateTime())
+                .addValue("date_time", getNeededTypeDate(meal.getDateTime()))
                 .addValue("user_id", userId);
-    }
-
-    @Override
-    public Meal save(Meal meal, int userId) {
-        MapSqlParameterSource map = getParamForSaving(meal, userId);
         if (meal.isNew()) {
             Number newId = insertMeal.executeAndReturnKey(map);
             meal.setId(newId.intValue());
         } else {
-            if (namedParameterJdbcTemplate.update("" +
-                            "UPDATE meals " +
+            if (namedParameterJdbcTemplate.update(
+                    "UPDATE meals " +
                             "   SET description=:description, calories=:calories, date_time=:date_time " +
                             " WHERE id=:id AND user_id=:user_id"
                     , map) == 0) {
@@ -86,15 +82,5 @@ public abstract class JdbcMealRepositoryImpl implements MealRepository {
         return jdbcTemplate.query(
                 "SELECT * FROM meals WHERE user_id=?  AND date_time BETWEEN  ? AND ? ORDER BY date_time DESC",
                 ROW_MAPPER, userId, getNeededTypeDate(startDate), getNeededTypeDate(endDate));
-    }
-
-    @Override
-    public Meal getWithUser(int id, int userID) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Meal getWithUserQwr(int id, int userID) {
-        throw new UnsupportedOperationException();
     }
 }
