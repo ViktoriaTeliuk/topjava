@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Profile(Profiles.POSTGRES_DB)
 @Repository
-public class JdbcMealRepositoryImplPostgress extends JdbcMealRepositoryImpl {
+public class JdbcMealRepositoryImplPostgress extends JdbcMealRepositoryImpl <LocalDateTime>{
 
     @Override
     protected LocalDateTime getNeededTypeDate(LocalDateTime dt) {

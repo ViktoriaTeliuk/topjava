@@ -14,7 +14,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public abstract class JdbcMealRepositoryImpl implements MealRepository {
+public abstract class JdbcMealRepositoryImpl <T> implements MealRepository {
 
     protected static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
@@ -74,7 +74,7 @@ public abstract class JdbcMealRepositoryImpl implements MealRepository {
                 "SELECT * FROM meals WHERE user_id=? ORDER BY date_time DESC", ROW_MAPPER, userId);
     }
 
-    abstract protected <T> T getNeededTypeDate(LocalDateTime dt);
+    abstract protected T getNeededTypeDate(LocalDateTime dt);
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
