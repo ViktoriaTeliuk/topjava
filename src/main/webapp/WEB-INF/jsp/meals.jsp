@@ -65,9 +65,6 @@
                     <c:param name="id" value="${meal.id}" />
                 </c:url>
                 <td><a href="${updateLink}">Edit</a></td>
-                <%--td><a href="meals?action=update&id=${meal.id}">Update</a></td>
-                <td><a href="meals?action=delete&id=${meal.id}">Delete</a></td>
-                <td><a href="@{'/delete/{id}'(id=${meal.id})}">Delete</a></td--%>
                 <c:url var="deleteLink" value="/meals/delete">
                     <c:param name="id" value="${meal.id}" />
                 </c:url>

@@ -17,19 +17,20 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 @Controller
+@RequestMapping("/meals")
 public class JspMealController {
 
     @Autowired
     private MealService mealService;
 
-    @GetMapping("/meals")
+    @GetMapping
     public String all(Model model) {
         model.addAttribute("meals", MealsUtil.getWithExcess(mealService.getAll(SecurityUtil.authUserId()),
                 SecurityUtil.authUserCaloriesPerDay()));
         return "meals";
     }
 
-    @PostMapping("/meals")
+    @PostMapping
     public String getFiltered(HttpServletRequest request) {
         request.setAttribute("meals", MealsUtil.getFilteredWithExcess(
                 mealService.getBetweenDates(parseLocalDate(request.getParameter("startDate")), parseLocalDate(request.getParameter("endDate")), SecurityUtil.authUserId()),
@@ -37,7 +38,7 @@ public class JspMealController {
         return "meals";
     }
 
-    @GetMapping("/meals/mealForm")
+    @GetMapping("/mealForm")
     public String showFormForAdd(@RequestParam("id") Integer id, Model model) {
         final Meal meal = id == null ? new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
                 mealService.get(id, SecurityUtil.authUserId());
@@ -45,7 +46,7 @@ public class JspMealController {
         return "mealForm";
     }
 
-    @PostMapping("/meals/saveMeal")
+    @PostMapping("/saveMeal")
     public String saveCustomer(HttpServletRequest request) {
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
@@ -60,7 +61,7 @@ public class JspMealController {
         return "redirect:/meals";
     }
 
-    @GetMapping("/meals/delete")
+    @GetMapping("/delete")
     public String delete(@RequestParam("id") int id) {
         mealService.delete(id, SecurityUtil.authUserId());
         return "redirect:/meals";
