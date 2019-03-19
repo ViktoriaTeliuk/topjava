@@ -41,7 +41,8 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    private void insertRolesBatch(String sql, int userId, List<Role> roles) {
+    private void insertRolesBatch(int userId, List<Role> roles) {
+        String sql = "INSERT INTO user_roles (user_id, role) VALUES(?, ?)";
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
@@ -71,7 +72,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         else
             jdbcTemplate.update("DELETE FROM user_roles where user_id=?", user.getId());
 
-        insertRolesBatch("INSERT INTO user_roles (user_id, role) VALUES(?, ?)", user.getId(), new ArrayList<>(user.getRoles()));
+        insertRolesBatch(user.getId(), new ArrayList<>(user.getRoles()));
         return user;
     }
 
@@ -85,9 +86,15 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         @Override
         public List<User> extractData(ResultSet resultSet) throws SQLException, DataAccessException {
             Collection<Role> roles = new ArrayList<>();
+            List<User> result = new ArrayList<>();
             User user = null;
             while (resultSet.next()) {
-                if (user == null) {
+                if ((user == null) || (user.getId() != resultSet.getInt("id"))) {
+                    if (user != null) {
+                        user.setRoles(EnumSet.copyOf(roles));
+                        result.add(user);
+                        roles.clear();
+                    }
                     user = new User();
                     user.setId(resultSet.getInt("id"));
                     user.setName(resultSet.getString("name"));
@@ -101,9 +108,9 @@ public class JdbcUserRepositoryImpl implements UserRepository {
             }
             if (user != null) {
                 user.setRoles(EnumSet.copyOf(roles));
-                return Collections.singletonList(user);
-            } else
-                return null;
+                result.add(user);
+            }
+            return result;
         }
     }
 
@@ -117,13 +124,12 @@ public class JdbcUserRepositoryImpl implements UserRepository {
 
     @Override
     public User getByEmail(String email) {
-//        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         List<User> users = jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_roles on id=user_id WHERE email=?", resultSetExtractorUserWithRoles, email);
         return DataAccessUtils.singleResult(users);
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_roles ur on users.id = ur.user_id ORDER BY name, email", resultSetExtractorUserWithRoles);
     }
 }
