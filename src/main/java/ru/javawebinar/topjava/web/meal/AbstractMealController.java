@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.web.meal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
@@ -19,11 +20,9 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 public abstract class AbstractMealController {
     protected static final Logger log = LoggerFactory.getLogger(MealRestController.class);
 
-    protected final MealService service;
+    @Autowired
+    protected MealService service;
 
-    protected AbstractMealController(MealService service) {
-        this.service = service;
-    }
     /**
      * <ol>Filter separately
      * <li>by date</li>

@@ -8,7 +8,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
@@ -24,16 +23,11 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     protected UserService service;
 
     @Autowired
-    private CacheManager cacheManager;
-
-    @Autowired(required = false)
-    protected JpaUtil jpaUtil;
+    protected CacheManager cacheManager;
 
     @Before
     public void setUp() throws Exception {
         cacheManager.getCache("users").clear();
-        if (jpaUtil != null)
-            jpaUtil.clear2ndLevelHibernateCache();
     }
 
     @Test
