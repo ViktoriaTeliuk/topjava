@@ -9,7 +9,7 @@ public abstract class AbstractUserServiceWithJpaUtilTest extends AbstractUserSer
 
     @Override
     public void setUp() throws Exception {
-        cacheManager.getCache("users").clear();
+        super.setUp();
         jpaUtil.clear2ndLevelHibernateCache();
     }
 }

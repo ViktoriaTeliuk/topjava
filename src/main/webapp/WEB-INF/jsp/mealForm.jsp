@@ -13,10 +13,8 @@
 <section>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <h3><a href="index.html"><spring:message code="app.home"/></a></h3>
-    <h2> <spring:message code="meal.adding" var="add"/>
-         <spring:message code="meal.editing" var="edit"/>
-         <c:out value="${meal.isNew() ? add : edit}"/>
-    </h2
+    <h2> <spring:message code="${meal.isNew() ? 'meal.adding' : 'meal.editing'}"/>
+    </h2>
     <hr>
     <form method="post" action="save">
         <input type="hidden" name="id" value="${meal.id}">

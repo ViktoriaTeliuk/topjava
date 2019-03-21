@@ -7,8 +7,4 @@ import static ru.javawebinar.topjava.Profiles.JDBC;
 
 @ActiveProfiles(JDBC)
 public class JdbcUserServiceTest extends AbstractUserServiceTest {
-    @Override
-    public void setUp() throws Exception {
-        cacheManager.getCache("users").clear();
-    }
 }
