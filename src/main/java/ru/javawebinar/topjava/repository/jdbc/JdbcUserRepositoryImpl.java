@@ -95,14 +95,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
                         result.add(user);
                         roles.clear();
                     }
-                    user = new User();
-                    user.setId(resultSet.getInt("id"));
-                    user.setName(resultSet.getString("name"));
-                    user.setEmail(resultSet.getString("email"));
-                    user.setEnabled(resultSet.getBoolean("enabled"));
-                    user.setCaloriesPerDay(resultSet.getInt("calories_per_day"));
-                    user.setPassword(resultSet.getString("password"));
-                    user.setRegistered(resultSet.getDate("registered"));
+                    user = ROW_MAPPER.mapRow(resultSet, resultSet.getRow());
                 }
                 roles.add(Role.valueOf(resultSet.getString("role")));
             }
