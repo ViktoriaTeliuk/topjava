@@ -1,13 +1,18 @@
 package ru.javawebinar.topjava;
 
+import org.springframework.test.web.servlet.ResultMatcher;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.List;
 
 import static java.time.LocalDateTime.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
+import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
 public class MealTestData {
     public static final int MEAL1_ID = START_SEQ + 2;
@@ -24,6 +29,11 @@ public class MealTestData {
 
     public static final List<Meal> MEALS = List.of(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1);
 
+    public static final List<MealTo> MEALS_TO = MealsUtil.getWithExcess(MEALS, DEFAULT_CALORIES_PER_DAY);
+
+    public static final List<MealTo> FILTERED_MEALS_TO = MealsUtil.getFilteredWithExcess(List.of(MEAL6, MEAL5, MEAL4),
+            DEFAULT_CALORIES_PER_DAY, LocalTime.of(10, 0), LocalTime.of(14, 30));
+
     public static Meal getCreated() {
         return new Meal(null, of(2015, Month.JUNE, 1, 18, 0), "Созданный ужин", 300);
     }
@@ -36,11 +46,32 @@ public class MealTestData {
         assertThat(actual).isEqualToIgnoringGivenFields(expected, "user");
     }
 
+    public static void assertMatch(MealTo actual, MealTo expected) {
+        assertThat(actual).isEqualToComparingFieldByField(expected);
+    }
+
     public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
         assertMatch(actual, List.of(expected));
     }
 
-    public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
+    public static void assertMatch(Iterable<?> actual, Iterable<?> expected) {
         assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected);
     }
+
+    public static ResultMatcher contentJson(Meal... expected) {
+        return result -> assertMatch(TestUtil.readListFromJsonMvcResult(result, Meal.class), List.of(expected));
+    }
+
+    public static ResultMatcher contentJson(Meal expected) {
+        return result -> assertMatch(TestUtil.readFromJsonMvcResult(result, Meal.class), expected);
+    }
+
+    public static ResultMatcher contentJson(MealTo... expected) {
+        return result -> assertMatch(TestUtil.readListFromJsonMvcResult(result, MealTo.class), List.of(expected));
+    }
+
+    public static ResultMatcher contentJson(MealTo expected) {
+        return result -> assertMatch(TestUtil.readFromJsonMvcResult(result, MealTo.class), expected);
+    }
+
 }
