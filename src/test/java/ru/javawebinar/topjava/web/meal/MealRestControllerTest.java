@@ -81,16 +81,25 @@ public class MealRestControllerTest extends AbstractControllerTest {
         //ISO_LOCAL_DATE_TIME 2011-12-03 10:15:30
     void getBetween() throws Exception {
         mockMvc.perform(get(REST_URL + "/filter")
-                .param("startDate", "2015-05-31T10:00:00")
-            //    .param("startTime", "10:00:00")
-                .param("endDate", "2015-05-31T14:30:00"))
-            //    .param("endTime", "14:30:00"))
+                .param("startDate", "2015-05-31")
+                .param("startTime", "10:00:00")
+                .param("endDate", "2015-05-31")
+                .param("endTime", "14:30:00"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(contentJson(FILTERED_MEALS_TO.toArray(new MealTo[0])));
     }
 
+
     @Test
     void getBetweenWithNull() throws Exception {
+        mockMvc.perform(get(REST_URL + "/filter")
+                .param("startDate", "")
+                .param("startTime", "")
+                .param("endDate", "")
+                .param("endTime", ""))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(contentJson(MEALS_TO.toArray(new MealTo[0])));
     }
 }
