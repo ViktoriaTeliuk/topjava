@@ -46,32 +46,40 @@ public class MealTestData {
         assertThat(actual).isEqualToIgnoringGivenFields(expected, "user");
     }
 
-    public static void assertMatch(MealTo actual, MealTo expected) {
-        assertThat(actual).isEqualToComparingFieldByField(expected);
+    public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
+        assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected);
     }
 
     public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
         assertMatch(actual, List.of(expected));
     }
 
-    public static void assertMatch(Iterable<?> actual, Iterable<?> expected) {
-        assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected);
+    public static void assertMatch(MealTo actual, MealTo expected) {
+        assertThat(actual).isEqualToComparingFieldByField(expected);
     }
 
-//    public static ResultMatcher contentJson(Meal... expected) {
-//        return result -> assertMatch(TestUtil.readListFromJsonMvcResult(result, Meal.class), List.of(expected));
-//    }
+    public static void assertMatchTo(Iterable<MealTo> actual, Iterable<MealTo> expected) {
+        assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected);
+    }
+
+    public static void assertMatch(Iterable<MealTo> actual, MealTo... expected) {
+        assertMatchTo(actual, List.of(expected));
+    }
+
+    public static ResultMatcher contentJson(Meal... expected) {
+        return result -> assertMatch(TestUtil.readListFromJsonMvcResult(result, Meal.class), List.of(expected));
+   }
 
     public static ResultMatcher contentJson(Meal expected) {
         return result -> assertMatch(TestUtil.readFromJsonMvcResult(result, Meal.class), expected);
     }
 
     public static ResultMatcher contentJson(MealTo... expected) {
-        return result -> assertMatch(TestUtil.readListFromJsonMvcResult(result, MealTo.class), List.of(expected));
+        return result -> assertMatchTo(TestUtil.readListFromJsonMvcResult(result, MealTo.class), List.of(expected));
     }
 
-//    public static ResultMatcher contentJson(MealTo expected) {
-//        return result -> assertMatch(TestUtil.readFromJsonMvcResult(result, MealTo.class), expected);
-//    }
+    public static ResultMatcher contentJson(MealTo expected) {
+        return result -> assertMatch(TestUtil.readFromJsonMvcResult(result, MealTo.class), expected);
+    }
 
 }

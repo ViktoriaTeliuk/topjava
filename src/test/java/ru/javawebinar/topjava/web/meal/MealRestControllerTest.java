@@ -31,7 +31,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testGet() throws Exception {
-        mockMvc.perform(get(REST_URL + "/" + MEAL1_ID))
+        mockMvc.perform(get(REST_URL + MEAL1_ID))
                 .andExpect(status().isNoContent())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(contentJson(MEAL1));
@@ -39,7 +39,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void remove() throws Exception {
-        mockMvc.perform(delete(REST_URL + "/" + MEAL1_ID))
+        mockMvc.perform(delete(REST_URL + MEAL1_ID))
                 .andExpect(status().isNoContent());
         assertMatch(mealService.getAll(SecurityUtil.authUserId()), MEAL6, MEAL5, MEAL4, MEAL3, MEAL2);
     }
@@ -47,7 +47,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     @Test
     void testUpdate() throws Exception {
         Meal updated = getUpdated();
-        mockMvc.perform(put(REST_URL + "/" + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
@@ -80,7 +80,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     @Test
         //ISO_LOCAL_DATE_TIME 2011-12-03 10:15:30
     void getBetween() throws Exception {
-        mockMvc.perform(get(REST_URL + "/filter")
+        mockMvc.perform(get(REST_URL + "filter")
                 .param("startDate", "2015-05-31")
                 .param("startTime", "10:00:00")
                 .param("endDate", "2015-05-31")
@@ -93,11 +93,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetweenWithNull() throws Exception {
-        mockMvc.perform(get(REST_URL + "/filter")
-                .param("startDate", "")
-                .param("startTime", "")
-                .param("endDate", "")
-                .param("endTime", ""))
+        mockMvc.perform(get(REST_URL + "filter"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(contentJson(MEALS_TO.toArray(new MealTo[0])));
