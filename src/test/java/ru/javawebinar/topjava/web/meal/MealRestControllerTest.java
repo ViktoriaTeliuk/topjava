@@ -6,7 +6,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
@@ -73,8 +72,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
         mockMvc.perform(get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(MEALS_TO.toArray(new MealTo[0])));
-        //https://stackoverflow.com/questions/174093/toarraynew-myclass0-or-toarraynew-myclassmylist-size/174146#174146
+                .andExpect(contentJson(MEALS_TO));
     }
 
     @Test
@@ -87,7 +85,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .param("endTime", "14:30:00"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(FILTERED_MEALS_TO.toArray(new MealTo[0])));
+                .andExpect(contentJson(FILTERED_MEALS_TO));
     }
 
 
@@ -96,6 +94,6 @@ public class MealRestControllerTest extends AbstractControllerTest {
         mockMvc.perform(get(REST_URL + "filter"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(MEALS_TO.toArray(new MealTo[0])));
+                .andExpect(contentJson(MEALS_TO));
     }
 }
