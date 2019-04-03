@@ -7,7 +7,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
-import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.util.List;
@@ -40,7 +39,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     void remove() throws Exception {
         mockMvc.perform(delete(REST_URL + MEAL1_ID))
                 .andExpect(status().isNoContent());
-        assertMatch(mealService.getAll(SecurityUtil.authUserId()), MEAL6, MEAL5, MEAL4, MEAL3, MEAL2);
+        assertMatch(mealService.getAll(USER_ID), MEAL6, MEAL5, MEAL4, MEAL3, MEAL2);
     }
 
     @Test
