@@ -37,4 +37,10 @@ public class InMemoryUserRepositoryImpl extends InMemoryBaseRepositoryImpl<User>
                 .findFirst()
                 .orElse(null);
     }
+
+    @Override
+    public boolean changeEnabledFlag(Integer id, boolean checked) {
+        entryMap.get(id).setEnabled(checked);
+        return true;
+    }
 }

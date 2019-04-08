@@ -21,4 +21,6 @@ public interface UserRepository {
     default User getWithMeals(int id) {
         throw new UnsupportedOperationException();
     }
+
+    boolean changeEnabledFlag(Integer id, boolean checked);
 }

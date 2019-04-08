@@ -10,6 +10,11 @@ import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
+import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 @Controller
 public class RootController {
@@ -37,10 +42,21 @@ public class RootController {
         return "redirect:meals";
     }
 
+
     @GetMapping("/meals")
-    public String meals(Model model) {
+    public String meals(HttpServletRequest request, Model model) {
+        LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
+        LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
+        LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
+        LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
+
         model.addAttribute("meals",
-                MealsUtil.getWithExcess(mealService.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay()));
+                MealsUtil.getFilteredWithExcess(mealService.getBetweenDates(startDate, endDate, SecurityUtil.authUserId()),
+                        SecurityUtil.authUserCaloriesPerDay(), startTime, endTime));
+
         return "meals";
     }
+
+
+
 }

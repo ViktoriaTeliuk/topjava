@@ -37,4 +37,10 @@ public class AdminUIController extends AbstractUserController {
             super.create(user);
         }
     }
+
+    @PutMapping("/*")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void changeEnabledFlag(@RequestParam("id") Integer id, @RequestParam("checked") Boolean checked) {
+        super.changeEnabledFlag(id, checked);
+    }
 }

@@ -39,4 +39,28 @@ $(function () {
             })
         }
     );
+    $(":checkbox").change(function () {
+        let checked = this.checked;
+        let checkBox = $(this);
+        $.ajax({
+            url: context.ajaxUrl + "?id=" + checkBox.closest("tr").attr("id") + "&checked=" + checked,
+            type: "PUT"
+        }).done(function () {
+            if (checked) {
+                checkBox.closest("tr").removeClass("notEnabled").addClass("enabled");
+                checkBox.closest("tr").css("color", "black");
+            } else {
+                checkBox.closest("tr").removeClass("enabled").addClass("notEnabled");
+                checkBox.closest("tr").css("color", "grey");
+            }
+            successNoty("Changed");
+        });
+
+    });
 });
+
+function updateTable() {
+    $.get(context.ajaxUrl, function (data) {
+        context.datatableApi.clear().rows.add(data).draw();
+    });
+}
