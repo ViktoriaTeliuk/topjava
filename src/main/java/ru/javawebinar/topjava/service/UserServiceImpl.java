@@ -69,6 +69,6 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(value = "users", allEntries = true)
     @Override
     public void changeEnabledFlag(int id, boolean checked) {
-        repository.changeEnabledFlag(id, checked);
+        checkNotFoundWithId(repository.changeEnabledFlag(id, checked), id);
     }
 }

@@ -52,6 +52,9 @@ $(function () {
                 checkBox.closest("tr").removeClass("enabled").addClass("notEnabled");
             }
             successNoty(checked ? "Enabled" : "Disabled");
+        }).fail(function (jqXHR) {
+            checkBox.prop('checked', !checked);
+            failNoty(jqXHR);
         });
 
     });
