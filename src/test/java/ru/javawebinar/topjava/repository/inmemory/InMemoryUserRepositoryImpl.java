@@ -39,7 +39,7 @@ public class InMemoryUserRepositoryImpl extends InMemoryBaseRepositoryImpl<User>
     }
 
     @Override
-    public boolean changeEnabledFlag(Integer id, boolean checked) {
+    public boolean changeEnabledFlag(int id, boolean checked) {
         entryMap.get(id).setEnabled(checked);
         return true;
     }

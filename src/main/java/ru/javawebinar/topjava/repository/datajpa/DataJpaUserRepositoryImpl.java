@@ -47,7 +47,7 @@ public class DataJpaUserRepositoryImpl implements UserRepository {
     }
 
     @Transactional
-    public boolean changeEnabledFlag(Integer id, boolean checked) {
+    public boolean changeEnabledFlag(int id, boolean checked) {
         User user = get(id);
         user.setEnabled(checked);
         return save(user) != null;

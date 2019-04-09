@@ -48,12 +48,10 @@ $(function () {
         }).done(function () {
             if (checked) {
                 checkBox.closest("tr").removeClass("notEnabled").addClass("enabled");
-                checkBox.closest("tr").css("color", "black");
             } else {
                 checkBox.closest("tr").removeClass("enabled").addClass("notEnabled");
-                checkBox.closest("tr").css("color", "grey");
             }
-            successNoty("Changed");
+            successNoty(checked ? "Enabled" : "Disabled");
         });
 
     });
@@ -61,6 +59,6 @@ $(function () {
 
 function updateTable() {
     $.get(context.ajaxUrl, function (data) {
-        context.datatableApi.clear().rows.add(data).draw();
+        redrawTable(data);
     });
 }

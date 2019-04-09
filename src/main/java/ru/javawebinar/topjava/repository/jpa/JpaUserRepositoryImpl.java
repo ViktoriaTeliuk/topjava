@@ -74,7 +74,7 @@ public class JpaUserRepositoryImpl implements UserRepository {
     }
 
     @Transactional
-    public boolean changeEnabledFlag(Integer id, boolean checked) {
+    public boolean changeEnabledFlag(int id, boolean checked) {
         Query query = em.createQuery("UPDATE User u SET u.enabled=:enabled WHERE u.id=:id");
         query.setParameter("id", id);
         query.setParameter("enabled", checked);

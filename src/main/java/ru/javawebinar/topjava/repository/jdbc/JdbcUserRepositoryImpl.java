@@ -118,7 +118,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     }
 
     @Transactional
-    public boolean changeEnabledFlag(Integer id, boolean checked) {
+    public boolean changeEnabledFlag(int id, boolean checked) {
         return jdbcTemplate.update("UPDATE users SET enabled=? WHERE id=?", checked, id) != 0;
     }
 }

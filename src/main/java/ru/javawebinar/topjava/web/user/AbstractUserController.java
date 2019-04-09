@@ -49,7 +49,7 @@ public abstract class AbstractUserController {
         return service.getByEmail(email);
     }
 
-    public void changeEnabledFlag(Integer id, boolean checked) {
+    public void changeEnabledFlag(int id, boolean checked) {
         log.info("changeEnabledFlag id={} on {}", id, checked);
         service.changeEnabledFlag(id, checked);
     }

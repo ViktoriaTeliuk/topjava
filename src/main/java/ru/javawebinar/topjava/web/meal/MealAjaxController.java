@@ -16,7 +16,13 @@ import java.util.List;
 public class MealAjaxController extends AbstractMealController {
 
     @Override
-    @GetMapping(value = "/*", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<MealTo> getAll() {
+        return super.getAll();
+    }
+
+    @Override
+    @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<MealTo> getBetween(@RequestParam(required = false) LocalDate startDate,
                                    @RequestParam(required = false) LocalTime startTime,
                                    @RequestParam(required = false) LocalDate endDate,

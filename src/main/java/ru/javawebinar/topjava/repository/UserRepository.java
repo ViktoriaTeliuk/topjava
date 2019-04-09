@@ -22,5 +22,5 @@ public interface UserRepository {
         throw new UnsupportedOperationException();
     }
 
-    boolean changeEnabledFlag(Integer id, boolean checked);
+    boolean changeEnabledFlag(int id, boolean checked);
 }

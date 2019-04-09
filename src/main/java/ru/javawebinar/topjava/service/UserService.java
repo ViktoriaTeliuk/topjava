@@ -22,6 +22,6 @@ public interface UserService {
 
     User getWithMeals(int id);
 
-    void changeEnabledFlag(Integer id, boolean checked);
+    void changeEnabledFlag(int id, boolean checked);
 
 }
