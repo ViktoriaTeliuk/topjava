@@ -2,13 +2,21 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
+
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
-<body>
-<script type="text/javascript" src="resources/js/topjava.common.js" defer></script>
-<script type="text/javascript" src="resources/js/topjava.meals.js" defer></script>
-<jsp:include page="fragments/bodyHeader.jsp"/>
 
+<head>
+<link rel="stylesheet" type="text/css" href="webjars/datetimepicker/2.5.20/jquery.datetimepicker.css"/>
+<script type="text/javascript" src="webjars/jquery/3.3.1-2/jquery.min.js"></script>
+<script type="text/javascript" src="webjars/datetimepicker/2.5.20/build/jquery.datetimepicker.full.min.js" defer></script>
+</head>
+
+<body>
+<script type="text/javascript" src="resources/js/topjava.common.js" defer ></script>
+<script type="text/javascript" src="resources/js/topjava.meals.js" defer></script>
+
+<jsp:include page="fragments/bodyHeader.jsp"/>
 <div class="jumbotron pt-4">
     <div class="container">
         <h3 class="text-center"><spring:message code="meal.title"/></h3>
@@ -19,19 +27,19 @@
                     <div class="row">
                         <div class="col-3">
                             <label for="startDate"><spring:message code="meal.startDate"/></label>
-                            <input class="form-control" type="date" name="startDate" id="startDate">
+                            <input class="form-control" name="startDate" id="startDate">
                         </div>
                         <div class="col-3">
                             <label for="endDate"><spring:message code="meal.endDate"/></label>
-                            <input class="form-control" type="date" name="endDate" id="endDate">
+                            <input class="form-control" name="endDate" id="endDate">
                         </div>
                         <div class="offset-2 col-2">
                             <label for="startTime"><spring:message code="meal.startTime"/></label>
-                            <input class="form-control" type="time" name="startTime" id="startTime">
+                            <input class="form-control" name="startTime" id="startTime">
                         </div>
                         <div class="col-2">
                             <label for="endTime"><spring:message code="meal.endTime"/></label>
-                            <input class="form-control" type="time" name="endTime" id="endTime">
+                            <input class="form-control" name="endTime" id="endTime">
                         </div>
                     </div>
                 </form>
@@ -62,23 +70,6 @@
                 <th></th>
             </tr>
             </thead>
-<%--
-            <c:forEach items="${meals}" var="meal">
-                <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
-                <tr data-mealExcess="${meal.excess}">
-                    <td>
-                            &lt;%&ndash;${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}&ndash;%&gt;
-                            &lt;%&ndash;<%=TimeUtil.toString(meal.getDateTime())%>&ndash;%&gt;
-                            &lt;%&ndash;${fn:replace(meal.dateTime, 'T', ' ')}&ndash;%&gt;
-                            ${fn:formatDateTime(meal.dateTime)}
-                    </td>
-                    <td>${meal.description}</td>
-                    <td>${meal.calories}</td>
-                    <td><a onclick="updateRow(${meal.id})"><span class="fa fa-pencil"></span></a></td>
-                    <td><a onclick="deleteRow(${meal.id})"><span class="fa fa-remove"></span></a></td>
-                </tr>
-            </c:forEach>
---%>
         </table>
     </div>
 </div>
@@ -96,7 +87,7 @@
 
                     <div class="form-group">
                         <label for="dateTime" class="col-form-label"><spring:message code="meal.dateTime"/></label>
-                        <input type="datetime-local" class="form-control" id="dateTime" name="dateTime"
+                        <input class="form-control" id="dateTime" name="dateTime"
                                placeholder="<spring:message code="meal.dateTime"/>">
                     </div>
 
@@ -132,10 +123,6 @@
     const i18n = [];
     i18n["addTitle"] = '<spring:message code="meal.add"/>';
     i18n["editTitle"] = '<spring:message code="meal.edit"/>';
-
-    <c:forEach var="key" items='<%=new String[]{"common.deleted","common.saved","common.errorStatus","common.confirm"}%>'>
-    i18n["${key}"] = "<spring:message code="${key}"/>";
-    </c:forEach>
 </script>
-
+<jsp:include page="fillI18n.jsp"/>
 </html>

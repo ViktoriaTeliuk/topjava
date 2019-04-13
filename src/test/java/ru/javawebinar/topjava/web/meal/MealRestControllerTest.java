@@ -38,6 +38,13 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testAnAuthGet() throws Exception {
+        mockMvc.perform(get(REST_URL + MEAL1_ID))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void testDelete() throws Exception {
         mockMvc.perform(delete(REST_URL + MEAL1_ID)
                 .with(userAuth(USER)))
@@ -99,14 +106,6 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .with(userAuth(USER)))
                 .andExpect(status().isOk())
                 .andExpect(contentJson(getWithExcess(MEALS, USER.getCaloriesPerDay())));
-    }
-
-    @Test
-    void testUnAuthForMeals() throws Exception {
-        mockMvc.perform(get("/meals/"))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
     }
 
 

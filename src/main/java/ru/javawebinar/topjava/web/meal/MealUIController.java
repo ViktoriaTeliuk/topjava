@@ -45,7 +45,7 @@ public class MealUIController extends AbstractMealController {
     }
 
     @PostMapping
-   // @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    // @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<String> createOrUpdate(@Valid MealTo mealTo, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.unprocessableEntity().body(fieldErrorsToString(result));
@@ -57,7 +57,6 @@ public class MealUIController extends AbstractMealController {
         }
         return ResponseEntity.ok().build();
     }
-
 
     @Override
     @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
