@@ -41,7 +41,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="detailsForm">
+                <form id="detailsForm" modelAttribute="userForm">
                     <input type="hidden" id="id" name="id">
 
                     <div class="form-group">

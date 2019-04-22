@@ -12,6 +12,7 @@
         <c:choose>
             <c:when test="${inputType == 'password'}"><form:password path="${name}" class="form-control is-invalid"/></c:when>
             <c:when test="${inputType == 'number'}"><form:input path="${name}" type="number" class="form-control is-invalid"/></c:when>
+            <c:when test="${inputType == 'hidden'}"><form:input path="${name}" type="hidden" class="form-control is-invalid"/></c:when>
             <c:otherwise><form:input path="${name}" class="form-control is-invalid"/></c:otherwise>
         </c:choose>
         <div class="invalid-feedback">${status.errorMessage}</div>
