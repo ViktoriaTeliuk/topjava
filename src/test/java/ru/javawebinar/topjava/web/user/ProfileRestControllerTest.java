@@ -3,13 +3,17 @@ package ru.javawebinar.topjava.web.user;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UserUtil;
+import ru.javawebinar.topjava.util.exception.ErrorInfo;
+import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -75,24 +79,30 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     void testRegisterWithExistingEmail() throws Exception {
         UserTo createdTo = new UserTo(null, "newName", USER.getEmail(), "newPassword", 1500);
 
-        ResultActions action = mockMvc.perform(post(REST_URL + "/register").contentType(MediaType.APPLICATION_JSON)
+        ResultActions result = mockMvc.perform(post(REST_URL + "/register").contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(createdTo)))
                 .andDo(print())
-                .andExpect(status().isConflict())
-                .andExpect(content().string(containsString("already exist")));
+                .andExpect(status().isBadRequest());
+        ErrorInfo error = readFromJson(result, ErrorInfo.class);
+        assertEquals(error.getType(), ErrorType.VALIDATION_ERROR);
     }
 
     @Test
     void testRegisterWithNotValidData() throws Exception {
         UserTo createdTo = new UserTo(null, "newName", "", "", 1500);
 
-        ResultActions action = mockMvc.perform(post(REST_URL + "/register").contentType(MediaType.APPLICATION_JSON)
+        //  assertThrows(DataIntegrityViolationException.class, () ->
+        ResultActions result = mockMvc.perform(post(REST_URL + "/register").contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(createdTo)))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isBadRequest());
+
+        ErrorInfo error = readFromJson(result, ErrorInfo.class);
+        assertEquals(error.getType(), ErrorType.VALIDATION_ERROR);
     }
 
 }

@@ -1,16 +1,19 @@
 package ru.javawebinar.topjava.web.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.util.exception.ErrorInfo;
+import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.util.Collections;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -81,9 +84,20 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isForbidden());
     }
 
+    private class UserTest extends User
+    {
+        @JsonProperty(access = JsonProperty.Access.READ_WRITE)
+        public String password;
+
+        public UserTest(User u, String password) {
+            super(u);
+            this.password = password;
+        }
+    }
+
     @Test
     void testUpdate() throws Exception {
-        User updated = new User(USER);
+        UserTest updated = new UserTest(USER, USER.getPassword());
         updated.setName("UpdatedName");
         updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
         mockMvc.perform(put(REST_URL + USER_ID)
@@ -124,23 +138,26 @@ class AdminRestControllerTest extends AbstractControllerTest {
     void testUpdateWithExistingEmail() throws Exception {
         User updated = new User(USER);
         updated.setEmail(ADMIN.getEmail());
-        mockMvc.perform(put(REST_URL + USER_ID)
+        ResultActions result = mockMvc.perform(put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("already exist")));
+                .andExpect(status().isBadRequest());
+        ErrorInfo error = readFromJson(result, ErrorInfo.class);
+        assertEquals(error.getType(), ErrorType.VALIDATION_ERROR);
     }
     @Test
 
     void testUpdateWithNotValidData() throws Exception {
         User updated = new User(USER);
-        updated.setPassword("");
-        mockMvc.perform(put(REST_URL + USER_ID)
+        updated.setEmail("");
+        ResultActions result = mockMvc.perform(put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isBadRequest());
+        ErrorInfo error = readFromJson(result, ErrorInfo.class);
+        assertEquals(error.getType(), ErrorType.VALIDATION_ERROR);
     }
 
 }

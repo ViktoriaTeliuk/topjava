@@ -38,10 +38,12 @@ public class MealUIController extends AbstractMealController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void createOrUpdate(@ModelAttribute("mealForm") @Valid Meal meal, BindingResult result) {
+    public void createOrUpdate(@Valid Meal meal) throws Exception{
+/*
         if (result.hasErrors()) {
             throw new IllegalRequestDataException(result.toString());
         }
+*/
         if (meal.isNew()) {
             super.create(meal);
         } else {

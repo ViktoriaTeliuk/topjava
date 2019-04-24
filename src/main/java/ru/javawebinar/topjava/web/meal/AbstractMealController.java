@@ -3,8 +3,9 @@ package ru.javawebinar.topjava.web.meal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
@@ -24,6 +25,7 @@ public abstract class AbstractMealController {
     @Autowired
     private MealService service;
 
+/*
     @Autowired
     MealValidator mealFormValidator;
 
@@ -32,6 +34,9 @@ public abstract class AbstractMealController {
     protected void initBinder(WebDataBinder binder) {
         binder.addValidators(mealFormValidator);
     }
+*/
+    @Autowired
+    MessageSource messageSource;
 
     public Meal get(int id) {
         int userId = SecurityUtil.authUserId();
@@ -55,14 +60,22 @@ public abstract class AbstractMealController {
         int userId = SecurityUtil.authUserId();
         checkNew(meal);
         log.info("create {} for user {}", meal, userId);
-        return service.create(meal, userId);
+        try {
+            return service.create(meal, userId);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(messageSource.getMessage("exception.duplicateDateTime", null, LocaleContextHolder.getLocale()));
+        }
     }
 
     public void update(Meal meal, int id) {
         int userId = SecurityUtil.authUserId();
         assureIdConsistent(meal, id);
         log.info("update {} for user {}", meal, userId);
-        service.update(meal, userId);
+        try {
+            service.update(meal, userId);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(messageSource.getMessage("exception.duplicateDateTime", null, LocaleContextHolder.getLocale()));
+        }
     }
 
     /**

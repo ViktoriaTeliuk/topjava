@@ -2,12 +2,10 @@ package ru.javawebinar.topjava.web.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UserUtil;
-import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -36,10 +34,7 @@ public class AdminUIController extends AbstractUserController {
     }
 
     @PostMapping
-    public void createOrUpdate(@ModelAttribute("userForm") @Valid UserTo userTo, BindingResult result) {
-        if (result.hasErrors()) {
-            throw new IllegalRequestDataException(result.toString());
-        }
+    public void createOrUpdate(@ModelAttribute("userForm") @Valid UserTo userTo) {
         if (userTo.isNew()) {
             super.create(UserUtil.createNewFromTo(userTo));
         } else {

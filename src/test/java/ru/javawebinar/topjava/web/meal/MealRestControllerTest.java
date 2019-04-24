@@ -5,12 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.util.exception.ErrorInfo;
+import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -128,27 +132,32 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     void testUpdateWithExistingDateTime() throws Exception {
         Meal updated = getUpdated();
         updated.setDateTime(MEAL2.getDateTime());
 
-        mockMvc.perform(put(REST_URL + MEAL1_ID)
+        ResultActions result = mockMvc.perform(put(REST_URL + MEAL1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated))
                 .with(userHttpBasic(USER)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("already exist")));
+                .andExpect(status().isConflict());
+
+        ErrorInfo error = readFromJson(result, ErrorInfo.class);
+        assertEquals(error.getType(), ErrorType.DATA_ERROR);
     }
 
     @Test
     void testUpdateNotValid() throws Exception {
         Meal updated = getUpdated();
         updated.setCalories(1);
-        mockMvc.perform(put(REST_URL + MEAL1_ID)
+        ResultActions result = mockMvc.perform(put(REST_URL + MEAL1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated))
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isBadRequest());
+        ErrorInfo error = readFromJson(result, ErrorInfo.class);
+        assertEquals(error.getType(), ErrorType.VALIDATION_ERROR);
     }
 
 }

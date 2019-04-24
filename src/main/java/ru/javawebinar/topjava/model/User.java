@@ -32,13 +32,13 @@ public class User extends AbstractNamedEntity {
 
     @Column(name = "email", nullable = false, unique = true)
     @Email
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(message = "{email.notBlank}")
+    @Size(max = 100, message = "{email.length}")
     private String email;
 
     @Column(name = "password", nullable = false)
-    @NotBlank
-    @Size(min = 5, max = 100)
+    @NotBlank(message = "{password.notBlank}")
+    @Size(min = 5, max = 100, message = "{password.length}")
     // https://stackoverflow.com/a/12505165/548473
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;

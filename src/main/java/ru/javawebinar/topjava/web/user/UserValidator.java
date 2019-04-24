@@ -6,30 +6,37 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.service.UserService;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.repository.UserRepository;
+import ru.javawebinar.topjava.to.UserTo;
+import ru.javawebinar.topjava.util.UserUtil;
 
 @Component
-public class UserValidator implements Validator {
+public class UserValidator<T> implements Validator {
 
     @Autowired
-    UserService userService;
+    UserRepository userRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return User.class.equals(clazz);
+        return true;//.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
 
-        User user = (User) target;
-        try {
-            User existing = userService.getByEmail(user.getEmail());
-            if (!existing.getId().equals(user.getId()))
-                errors.rejectValue("email", "User with this email already exists");
-        }
-        catch (NotFoundException e) {
+        T user = (T) target;
+        if (user instanceof UserTo) {
+            User find = userRepository.getByEmail(((UserTo) user).getEmail());
+            if (find != null) {
+                UserTo existing = UserUtil.asTo(find);
+                if (!existing.getId().equals(((UserTo) user).getId()))
+                    errors.rejectValue("email", "exception.duplicateEmail");
+            }
+        } else {
+            User existing = userRepository.getByEmail(((User) user).getEmail());
+            if (existing != null)
+                if (!existing.getId().equals(((User) user).getId()))
+                    errors.rejectValue("email", "exception.duplicateEmail");
         }
     }
 }

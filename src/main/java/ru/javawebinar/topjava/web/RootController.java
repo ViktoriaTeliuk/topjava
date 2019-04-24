@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.support.SessionStatus;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UserUtil;
-import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.web.user.AbstractUserController;
 
 import javax.validation.Valid;
@@ -22,7 +21,7 @@ public class RootController extends AbstractUserController {
         return "redirect:meals";
     }
 
-//    @Secured("ROLE_ADMIN")
+    //    @Secured("ROLE_ADMIN")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users")
     public String users() {
@@ -46,10 +45,9 @@ public class RootController extends AbstractUserController {
 
     @PostMapping("/profile")
     public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
-        if (result.hasErrors()) {
-            throw new IllegalRequestDataException(result.toString());
-           // return "profile";
-        } else {
+        if (result.hasErrors())
+            return "profile";
+        else {
             super.update(userTo, SecurityUtil.authUserId());
             SecurityUtil.get().update(userTo);
             status.setComplete();
@@ -67,9 +65,8 @@ public class RootController extends AbstractUserController {
     @PostMapping("/register")
     public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
         if (result.hasErrors()) {
-            throw new IllegalRequestDataException(result.toString());
-           //   model.addAttribute("register", true);
-          //  return "profile";
+            model.addAttribute("register", true);
+            return "profile";
         } else {
             super.create(UserUtil.createNewFromTo(userTo));
             status.setComplete();

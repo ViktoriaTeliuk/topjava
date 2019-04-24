@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.util;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import ru.javawebinar.topjava.HasId;
@@ -58,14 +60,14 @@ public class ValidationUtil {
         return result;
     }
 
-    public static ResponseEntity<String> getErrorResponse(BindingResult result) {
+    public static ResponseEntity<String> getErrorResponse(BindingResult result, MessageSource messageSource) {
         StringJoiner joiner = new StringJoiner("<br>");
         result.getFieldErrors().forEach(
                 fe -> {
                     String msg = fe.getDefaultMessage();
                     if (msg != null) {
                         if (!msg.startsWith(fe.getField())) {
-                            msg = fe.getField() + ' ' + msg;
+                            msg = fe.getField() + ' ' + messageSource.getMessage(msg.substring(1, msg.length()-1), null, LocaleContextHolder.getLocale());
                         }
                         joiner.add(msg);
                     }

@@ -21,12 +21,12 @@ public abstract class AbstractUserController {
     private UserService service;
 
     @Autowired
-    UserToValidator userToValidator;
+    UserValidator<UserTo> userValidator;
 
     //Set a form validator
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
-        binder.addValidators(userToValidator);
+        binder.addValidators(userValidator);
     }
 
     public List<User> getAll() {

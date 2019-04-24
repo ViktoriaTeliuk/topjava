@@ -12,16 +12,16 @@ import java.io.Serializable;
 public class UserTo extends BaseTo implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @NotBlank
-    @Size(min = 2, max = 100)
+    @NotBlank(message = "{user.notBlank}")
+    @Size(min = 2, max = 100, message = "{user.length}")
     private String name;
 
     @Email
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(message = "{email.notBlank}")
+    @Size(max = 100, message = "{email.length}")
     private String email;
 
-    @Size(min = 5, max = 32, message = "length must between 5 and 32 characters")
+    @Size(min = 5, max = 32, message = "{password.length}")
     private String password;
 
     @Range(min = 10, max = 10000)
